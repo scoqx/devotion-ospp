@@ -162,7 +162,7 @@ command         "g_rampJump 0"
 ## Quick Start
 ```
 pro 0                            // Unsets team/enemy model/color cvars
-pro 1                            // Sets enemy model to green keel/pm, teamModel to white doom/pm
+pro 1                            // Sets enemy model to green keel/pm, teamModel to white doom/pm. Other options available with different brightshells [2-9]
 ```
 
 ## Configuring Player Models
@@ -171,11 +171,10 @@ pro 1                            // Sets enemy model to green keel/pm, teamModel
 set model "visor/pm"             // Sets visor/pm as you player model
 set team_model "visor/pm"        // Sets visor/pm as your player model during team games
 set cg_enemyModel "keel/pm"      // Sets _all_ enemies as keel/pm
-set cg_enemyColor "green"        // Sets _all_ enemies as the color "green" if bright shells are turned on
-set cg_enemyColors "222"         // Sets _all_ enemies as the PM color green in head, body, and torso without the need for bright shells
-set cg_teamModel "sarge/default" // In team games, sets _all_ members as sarge/default
-set cg_teamColor "orange"        // Sets your team's color if bright shells are turned on
-set cg_teamColors "111"          // Sets your team's PM color "red" in head, body, and torso without the need for bright shells
+set cg_enemyColor "22222"        // Sets _all_ enemies as the PM color green in head, body, legs, color 1, and color 2 without the need for bright shells
+set cg_teamModel "doom/pm"       // In team games, sets _all_ members as doom/pm
+set cg_teamColor "77777"         // Sets _all_ team members as the PM color white in head, body, legs, color 1, and color 2 without the need for bright shells
+set cg_brightShells "1"          // Sets brightshells on. Shells honor cg_enemyColor and cg_teamColor
 ```
 
 ## Selecting a HUD
