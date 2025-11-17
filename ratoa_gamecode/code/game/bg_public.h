@@ -547,7 +547,8 @@ typedef enum {
 
 #define	EVENT_VALID_MSEC	300
 
-typedef enum {
+typedef enum
+{
 	EV_NONE,
 
 	EV_FOOTSTEP,
@@ -565,7 +566,7 @@ typedef enum {
 	EV_FALL_MEDIUM,
 	EV_FALL_FAR,
 
-	EV_JUMP_PAD,          // boing sound at origin", jump sound on player
+	EV_JUMP_PAD,            // boing sound at origin, jump sound on player
 
 	EV_JUMP,
 	EV_WATER_TOUCH,   // foot touches
@@ -616,7 +617,7 @@ typedef enum {
 	EV_MISSILE_MISS_METAL,
 	EV_RAILTRAIL,
 	EV_SHOTGUN,
-	EV_BULLET,                // otherEntity is the shooter
+	EV_BULLET,              // otherEntity is the shooter
 
 	EV_PAIN,
 	EV_DEATH1,
@@ -628,9 +629,10 @@ typedef enum {
 	EV_POWERUP_BATTLESUIT,
 	EV_POWERUP_REGEN,
 
-	EV_GIB_PLAYER,            // gib a previously living player
-	EV_SCOREPLUM,         // score plum
+	EV_GIB_PLAYER,          // gib a previously living player
+	EV_SCOREPLUM,           // score plum
 
+//#ifdef MISSIONPACK
 	EV_PROXIMITY_MINE_STICK,
 	EV_PROXIMITY_MINE_TRIGGER,
 	EV_KAMIKAZE,            // kamikaze explodes
@@ -639,6 +641,7 @@ typedef enum {
 	EV_INVUL_IMPACT,        // invulnerability sphere impact
 	EV_JUICED,              // invulnerability juiced effect
 	EV_LIGHTNINGBOLT,       // lightning bolt bounced of invulnerability sphere
+//#endif
 
 	EV_DEBUG_LINE,
 	EV_STOPLOOPINGSOUND,

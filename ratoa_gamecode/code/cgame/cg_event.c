@@ -1133,6 +1133,10 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
 			CG_ShotgunFire(es);
 			break;
 
+		case EV_BULLET:
+			DEBUGNAME("EV_BULLET");
+			// EV_BULLET is handled by prediction, no client-side processing needed
+			break;
 
 		case EV_GENERAL_SOUND:
 			DEBUGNAME("EV_GENERAL_SOUND");
@@ -1231,13 +1235,13 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
 				case GTS_REDOBELISK_ATTACKED: // Overload: red obelisk is being attacked
 					if (cgs.clientinfo[cg.clientNum].team == TEAM_RED)
 					{
-						CG_AddBufferedSound(cgs.media.yourBaseIsUnderAttackSound);
+						// CG_AddBufferedSound(cgs.media.yourBaseIsUnderAttackSound);
 					}
 					break;
 				case GTS_BLUEOBELISK_ATTACKED: // Overload: blue obelisk is being attacked
 					if (cgs.clientinfo[cg.clientNum].team == TEAM_BLUE)
 					{
-						CG_AddBufferedSound(cgs.media.yourBaseIsUnderAttackSound);
+						// CG_AddBufferedSound(cgs.media.yourBaseIsUnderAttackSound);
 					}
 					break;
 
