@@ -661,7 +661,7 @@ static void CG_AddMoveScaleFade( localEntity_t *le ) {
 	}
 
 	re->shaderRGBA[3] = 0xff * c * le->color[3];
-	if ( le->leFlags & LEF_FADE_RGB ) {
+	/* if ( le->leFlags & LEF_FADE_RGB ) */ {
 		re->shaderRGBA[0] = 0xff * c * le->color[0];
 		re->shaderRGBA[1] = 0xff * c * le->color[1];
 		re->shaderRGBA[2] = 0xff * c * le->color[2];
@@ -672,7 +672,7 @@ static void CG_AddMoveScaleFade( localEntity_t *le ) {
 	}
 
 	BG_EvaluateTrajectory( &le->pos, cg.time, re->origin );
-	if ( le->leFlags & LEF_MOVE_OLDORIGIN) {
+	if ( le->leFlags/*  & LEF_MOVE_OLDORIGIN */) {
 		BG_EvaluateTrajectory( &le->pos2, cg.time, re->oldorigin );
 	}
 
@@ -729,7 +729,7 @@ static void CG_AddScaleFade( localEntity_t *le ) {
 }
 
 static void CG_AddLocationPing( localEntity_t *le ) {
-	refEntity_t	*re;
+	/* refEntity_t	*re;
 	float		c;
 	vec3_t		delta;
 	float		len;
@@ -771,7 +771,7 @@ static void CG_AddLocationPing( localEntity_t *le ) {
 		CG_FreeLocalEntity( le );
 		return;
 	}
-	trap_R_AddRefEntityToScene( re );
+	trap_R_AddRefEntityToScene( re ); */
 }
 
 
@@ -1289,12 +1289,12 @@ void CG_AddLocalEntities( void ) {
 		case LE_FADE_RGB:				// teleporters, railtrails
 			CG_AddFadeRGB( le );
 			break;
-		case LE_FADE_RGB_SIN:				// railtrails
+/* 		case LE_FADE_RGB_SIN:				// railtrails
 			CG_AddFadeRGBSin( le );
-			break;
-		case LE_RAILTUBE:				// railtrails
+			break; */
+/* 		case LE_RAILTUBE:				// railtrails
 			CG_AddRailtube( le );
-			break;
+			break; */
 
 		case LE_FALL_SCALE_FADE: // gib blood trails
 			CG_AddFallScaleFade( le );
@@ -1304,13 +1304,13 @@ void CG_AddLocalEntities( void ) {
 			CG_AddScaleFade( le );
 			break;
 
-		case LE_LOCATIONPING:		// location pings
-			CG_AddLocationPing( le );
-			break;
+		// case LE_LOCATIONPING:		// location pings
+		// 	CG_AddLocationPing( le );
+		// 	break;
 
-		case LE_DAMAGEPLUM:
-			CG_AddDamagePlum( le );
-			break;
+		// case LE_DAMAGEPLUM:
+		// 	CG_AddDamagePlum( le );
+		// 	break;
 
 		case LE_SCOREPLUM:
 			CG_AddScorePlum( le );
@@ -1327,9 +1327,9 @@ void CG_AddLocalEntities( void ) {
 			CG_AddInvulnerabilityJuiced( le );
 			break;
 */
-		case LE_SHOWREFENTITY:
-			CG_AddRefEntity( le );
-			break;
+		// case LE_SHOWREFENTITY:
+		// 	CG_AddRefEntity( le );
+		// 	break;
 //#endif
 		/*
 		case LE_GORE:			// blood

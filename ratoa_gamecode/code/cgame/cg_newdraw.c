@@ -486,7 +486,7 @@ static void CG_DrawPlayerItem( rectDef_t *rect, float scale, qboolean draw2D) {
   vec3_t origin, angles;
 
 	value = cg.snap->ps.stats[STAT_HOLDABLE_ITEM];
-	if ( value ) {
+	if ( value && value < bg_numItems ) {
 		CG_RegisterItemVisuals( value );
 
 		if (qtrue) {
@@ -813,7 +813,7 @@ static void CG_DrawCTFPowerUp(rectDef_t *rect) {
 		return;
 	}
 	value = cg.snap->ps.stats[STAT_PERSISTANT_POWERUP];
-	if ( value ) {
+	if ( value && value < bg_numItems ) {
 		CG_RegisterItemVisuals( value );
 		CG_DrawPic( rect->x, rect->y, rect->w, rect->h, cg_items[ value ].icon );
 	}

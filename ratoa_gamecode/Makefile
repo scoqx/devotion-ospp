@@ -812,28 +812,20 @@ endif
 
 ifneq ($(BUILD_GAME_SO),0)
   TARGETS += \
-    $(B)/baseq3/cgame$(ARCH).$(SHLIBEXT) \
-    $(B)/baseq3/qagame$(ARCH).$(SHLIBEXT) \
-    $(B)/baseq3/ui$(ARCH).$(SHLIBEXT)
+    $(B)/baseq3/cgame$(ARCH).$(SHLIBEXT)
   ifneq ($(BUILD_MISSIONPACK),0)
     TARGETS += \
-    $(B)/missionpack/cgame$(ARCH).$(SHLIBEXT) \
-    $(B)/missionpack/qagame$(ARCH).$(SHLIBEXT) \
-    $(B)/missionpack/ui$(ARCH).$(SHLIBEXT)
+    $(B)/missionpack/cgame$(ARCH).$(SHLIBEXT)
   endif
 endif
 
 ifneq ($(BUILD_GAME_QVM),0)
   ifneq ($(CROSS_COMPILING),1)
     TARGETS += \
-      $(B)/baseq3/vm/cgame.qvm \
-      $(B)/baseq3/vm/qagame.qvm \
-      $(B)/baseq3/vm/ui.qvm
+      $(B)/baseq3/vm/cgame.qvm
     ifneq ($(BUILD_MISSIONPACK),0)
       TARGETS += \
-      $(B)/missionpack/vm/qagame.qvm \
-      $(B)/missionpack/vm/cgame.qvm \
-      $(B)/missionpack/vm/ui.qvm
+      $(B)/missionpack/vm/cgame.qvm
     endif
   endif
 endif
@@ -995,6 +987,13 @@ endef
 # MAIN TARGETS
 #############################################################################
 
+# Disable built-in suffix rules (especially .y -> .c) to prevent yacc requirement
+.SUFFIXES:
+.SUFFIXES: .c .o .asm .s .h
+# Override any built-in .y -> .c rule
+%.c: %.y
+	@:
+
 default: release
 all: debug release
 
@@ -1114,7 +1113,16 @@ LBURGOBJ= \
 	$(B)/tools/lburg/lburg.o \
 	$(B)/tools/lburg/gram.o
 
+# Use existing gram.c - no need to regenerate from gram.y
+$(B)/tools/lburg/gram.c: $(LBURGDIR)/gram.c
+	@mkdir -p $(B)/tools/lburg
+	@cp $< $@
+
 $(B)/tools/lburg/%.o: $(LBURGDIR)/%.c
+	@mkdir -p $(B)/tools/lburg
+	$(DO_TOOLS_CC)
+
+$(B)/tools/lburg/gram.o: $(B)/tools/lburg/gram.c
 	$(DO_TOOLS_CC)
 
 $(LBURG): $(LBURGOBJ)
@@ -2140,8 +2148,8 @@ $(B)/missionpack/qcommon/%.asm: $(CMDIR)/%.c $(Q3LCC)
 #############################################################################
 
 OBJ = $(Q3OBJ) $(Q3POBJ) $(Q3POBJ_SMP) $(Q3DOBJ) \
-  $(MPGOBJ) $(Q3GOBJ) $(Q3CGOBJ) $(MPCGOBJ) $(Q3UIOBJ) $(MPUIOBJ) \
-  $(MPGVMOBJ) $(Q3GVMOBJ) $(Q3CGVMOBJ) $(MPCGVMOBJ) $(Q3UIVMOBJ) $(MPUIVMOBJ)
+  $(Q3CGOBJ) $(MPCGOBJ) \
+  $(Q3CGVMOBJ) $(MPCGVMOBJ)
 TOOLSOBJ = $(LBURGOBJ) $(Q3CPPOBJ) $(Q3RCCOBJ) $(Q3LCCOBJ) $(Q3ASMOBJ)
 
 
@@ -2168,17 +2176,9 @@ endif
 ifneq ($(BUILD_GAME_SO),0)
 	$(INSTALL) -s -m 0755 $(BR)/baseq3/cgame$(ARCH).$(SHLIBEXT) \
 					$(COPYDIR)/baseq3/.
-	$(INSTALL) -s -m 0755 $(BR)/baseq3/qagame$(ARCH).$(SHLIBEXT) \
-					$(COPYDIR)/baseq3/.
-	$(INSTALL) -s -m 0755 $(BR)/baseq3/ui$(ARCH).$(SHLIBEXT) \
-					$(COPYDIR)/baseq3/.
   ifneq ($(BUILD_MISSIONPACK),0)
 	-$(MKDIR) -p -m 0755 $(COPYDIR)/missionpack
 	$(INSTALL) -s -m 0755 $(BR)/missionpack/cgame$(ARCH).$(SHLIBEXT) \
-					$(COPYDIR)/missionpack/.
-	$(INSTALL) -s -m 0755 $(BR)/missionpack/qagame$(ARCH).$(SHLIBEXT) \
-					$(COPYDIR)/missionpack/.
-	$(INSTALL) -s -m 0755 $(BR)/missionpack/ui$(ARCH).$(SHLIBEXT) \
 					$(COPYDIR)/missionpack/.
   endif
 endif

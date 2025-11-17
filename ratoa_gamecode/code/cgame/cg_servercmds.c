@@ -465,7 +465,23 @@ CG_ParseScores
 =================
 */
 static void CG_ParseScores( void ) {
-	int		i, powerups;
+	int		i;
+	int		powerups;
+	int		base;
+	int		client;
+	int		extraScoreClients[MAX_CLIENTS];
+	int		extraScoreCount;
+	int		index;
+	int		ospArgsNeeded;
+	int		devotionArgsNeeded;
+	int		totalArgs;
+	qboolean	clientInScores[MAX_CLIENTS];
+	qboolean	isOSPFormat;
+
+	// Initialize client tracking
+	for (i = 0; i < MAX_CLIENTS; i++) {
+		clientInScores[i] = qfalse;
+	}
 
 	cg.numScores = atoi( CG_Argv( 1 ) );
 	if ( cg.numScores > MAX_CLIENTS ) {
@@ -475,7 +491,25 @@ static void CG_ParseScores( void ) {
 	cg.teamScores[0] = atoi( CG_Argv( 2 ) );
 	cg.teamScores[1] = atoi( CG_Argv( 3 ) );
 
-	cgs.roundStartTime = atoi( CG_Argv( 4 ) );
+	// Check if this is OSP format (no roundStartTime at position 4) or Devotion format
+	// OSP format: scores <num> <team0> <team1> <client0> <score0> <ping0> ... (14 fields per player)
+	// Devotion format: scores <num> <team0> <team1> <roundStartTime> <client0> <score0> ... (15 fields per player)
+	// Try OSP format first - check if we have enough args for OSP format
+	// OSP needs: 3 base args + numScores * 14 fields
+	ospArgsNeeded = 3 + cg.numScores * 14;
+	devotionArgsNeeded = 4 + cg.numScores * 15;
+	totalArgs = trap_Argc();
+	
+	if (totalArgs >= ospArgsNeeded && (totalArgs < devotionArgsNeeded || cg.numScores == 0)) {
+		// OSP format detected - no roundStartTime
+		cgs.roundStartTime = 0;
+	} else if (totalArgs >= devotionArgsNeeded) {
+		// Devotion format - has roundStartTime at position 4
+		cgs.roundStartTime = atoi(CG_Argv(4));
+	} else {
+		// Not enough arguments for either format, default to OSP
+		cgs.roundStartTime = 0;
+	}
 
 	//Update thing in lower-right corner
 	if(BG_IsElimTeamGT(cgs.gametype))
@@ -486,39 +520,109 @@ static void CG_ParseScores( void ) {
 
 	memset( cg.scores, 0, sizeof( cg.scores ) );
 
-#define NUM_DATA 15
-#define FIRST_DATA 4
+	// Determine format based on argument count
+	isOSPFormat = (totalArgs >= ospArgsNeeded && (totalArgs < devotionArgsNeeded || cg.numScores == 0));
 
+	// Parse scores using the detected format
 	for ( i = 0 ; i < cg.numScores ; i++ ) {
-		//
-		cg.scores[i].client = atoi( CG_Argv( i * NUM_DATA + FIRST_DATA + 1 ) );
-		cg.scores[i].score = atoi( CG_Argv( i * NUM_DATA + FIRST_DATA + 2 ) );
-		cg.scores[i].ping = atoi( CG_Argv( i * NUM_DATA + FIRST_DATA + 3 ) );
-		cg.scores[i].time = atoi( CG_Argv( i * NUM_DATA + FIRST_DATA + 4 ) );
-		cg.scores[i].scoreFlags = atoi( CG_Argv( i * NUM_DATA + FIRST_DATA + 5 ) );
-		powerups = atoi( CG_Argv( i * NUM_DATA + FIRST_DATA + 6 ) );
-		cg.scores[i].accuracy = atoi(CG_Argv(i * NUM_DATA + FIRST_DATA + 7));
-		cg.scores[i].impressiveCount = atoi(CG_Argv(i * NUM_DATA + FIRST_DATA + 8));
-		cg.scores[i].excellentCount = atoi(CG_Argv(i * NUM_DATA + FIRST_DATA + 9));
-		cg.scores[i].guantletCount = atoi(CG_Argv(i * NUM_DATA + FIRST_DATA + 10));
-		cg.scores[i].defendCount = atoi(CG_Argv(i * NUM_DATA + FIRST_DATA + 11));
-		cg.scores[i].assistCount = atoi(CG_Argv(i * NUM_DATA + FIRST_DATA + 12));
-		cg.scores[i].perfect = atoi(CG_Argv(i * NUM_DATA + FIRST_DATA + 13));
-		cg.scores[i].captures = atoi(CG_Argv(i * NUM_DATA + FIRST_DATA + 14));
-		cg.scores[i].isDead = atoi(CG_Argv(i * NUM_DATA + FIRST_DATA + 15));
-		//cgs.roundStartTime = 
-		
-		cg.scores[i].time *= 60;
+		if (isOSPFormat) {
+			// OSP format: base = i * 14 + 4
+			base = i * 14 + 4;
+			if (trap_Argc() <= base + 13) {
+				// Not enough arguments, skip this player
+				continue;
+			}
+			
+			client = atoi( CG_Argv( base ) );
+			if (client < 0 || client >= MAX_CLIENTS) {
+				client = 0;
+			}
+			cg.scores[i].client = client;
+			clientInScores[client] = qtrue;
 
-		if ( cg.scores[i].client < 0 || cg.scores[i].client >= MAX_CLIENTS ) {
-			cg.scores[i].client = 0;
+			cg.scores[i].score = atoi( CG_Argv( base + 1 ) );
+			cg.scores[i].ping = atoi( CG_Argv( base + 2 ) );
+			cg.scores[i].time = atoi( CG_Argv( base + 3 ) );
+			cg.scores[i].scoreFlags = atoi( CG_Argv( base + 4 ) );
+			powerups = atoi( CG_Argv( base + 5 ) );
+			cg.scores[i].accuracy = atoi(CG_Argv(base + 6));
+			cg.scores[i].impressiveCount = atoi(CG_Argv(base + 7));
+			cg.scores[i].excellentCount = atoi(CG_Argv(base + 8));
+			cg.scores[i].guantletCount = atoi(CG_Argv(base + 9));
+			cg.scores[i].defendCount = atoi(CG_Argv(base + 10));
+			cg.scores[i].assistCount = atoi(CG_Argv(base + 11));
+			cg.scores[i].perfect = atoi(CG_Argv(base + 12));
+			cg.scores[i].captures = atoi(CG_Argv(base + 13));
+			
+			// OSP format doesn't have these fields, set defaults
+			cg.scores[i].isDead = 0;
+			cg.scores[i].kills = 0;
+			cg.scores[i].deaths = 0;
+			cg.scores[i].dmgGiven = 0;
+			cg.scores[i].dmgTaken = 0;
+		} else {
+			// Devotion format: base = i * 15 + 5 (after roundStartTime)
+			base = i * 15 + 5;
+			if (trap_Argc() <= base + 15) {
+				// Not enough arguments, skip this player
+				continue;
+			}
+			
+			client = atoi( CG_Argv( base ) );
+			if (client < 0 || client >= MAX_CLIENTS) {
+				client = 0;
+			}
+			cg.scores[i].client = client;
+			clientInScores[client] = qtrue;
+
+			cg.scores[i].score = atoi( CG_Argv( base + 1 ) );
+			cg.scores[i].ping = atoi( CG_Argv( base + 2 ) );
+			cg.scores[i].time = atoi( CG_Argv( base + 3 ) );
+			cg.scores[i].scoreFlags = atoi( CG_Argv( base + 4 ) );
+			powerups = atoi( CG_Argv( base + 5 ) );
+			cg.scores[i].accuracy = atoi(CG_Argv(base + 6));
+			cg.scores[i].impressiveCount = atoi(CG_Argv(base + 7));
+			cg.scores[i].excellentCount = atoi(CG_Argv(base + 8));
+			cg.scores[i].guantletCount = atoi(CG_Argv(base + 9));
+			cg.scores[i].defendCount = atoi(CG_Argv(base + 10));
+			cg.scores[i].assistCount = atoi(CG_Argv(base + 11));
+			cg.scores[i].perfect = atoi(CG_Argv(base + 12));
+			cg.scores[i].captures = atoi(CG_Argv(base + 13));
+			cg.scores[i].isDead = atoi(CG_Argv(base + 14));
+			
+			cg.scores[i].time *= 60;
 		}
+
 		cgs.clientinfo[ cg.scores[i].client ].score = cg.scores[i].score;
 		cgs.clientinfo[ cg.scores[i].client ].powerups = powerups;
-		cgs.clientinfo[ cg.scores[i].client ].isDead = cg.scores[i].isDead;
+		if (cg.scores[i].isDead >= 0) {
+			cgs.clientinfo[ cg.scores[i].client ].isDead = cg.scores[i].isDead;
+		}
 
 		cg.scores[i].team = cgs.clientinfo[cg.scores[i].client].team;
 	}
+
+	// Add extra clients that weren't in scores (OSP behavior)
+	extraScoreCount = 0;
+	for (i = 0; i < MAX_CLIENTS; i++) {
+		if (!cgs.clientinfo[i].infoValid) {
+			continue;
+		}
+		if (!clientInScores[i]) {
+			extraScoreClients[extraScoreCount++] = i;
+		}
+	}
+
+	for (i = 0; i < extraScoreCount; i++) {
+		index = cg.numScores + i;
+		if (index >= MAX_CLIENTS) {
+			break;
+		}
+		client = extraScoreClients[i];
+		cg.scores[index].client = client;
+		cg.scores[index].team = cgs.clientinfo[client].team;
+	}
+
 #ifdef MISSIONPACK
 	CG_SetScoreSelection(NULL);
 #endif

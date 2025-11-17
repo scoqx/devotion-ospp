@@ -1267,26 +1267,10 @@ static int PM_FootstepForSurface( void ) {
 	if ( pml.groundTrace.surfaceFlags & SURF_NOSTEPS ) {
 		return 0;
 	}
-	if ( pml.groundTrace.surfaceFlags & SURF_METALSTEPS ) {
+	if (pml.groundTrace.surfaceFlags & SURF_METALSTEPS)
+	{
 		return EV_FOOTSTEP_METAL;
 	}
-	if ( pml.groundTrace.surfaceFlags & SURF_WOODSTEPS ) {	//mrd - new event for wooden steps
-		return EV_FOOTSTEP_WOOD;
-	}
-	//mrd - this clashes with existing surfaces (flesh, some metal steps, etc.)
-	//if ( pml.groundTrace.surfaceFlags & 0x84021 ) {	//mrd - testing snowsteps
-	if ( pml.groundTrace.surfaceFlags & SURF_SNOWSTEPS ) {	//mrd - new event for wooden steps
-		return EV_FOOTSTEP_SNOW;
-	}
-	
-	/*if ( pml.groundTrace.surfaceFlags & 0x80021 ) {	//mrd - testing snowsteps
-		Com_Printf("Footstep trace bitflag 0x80021\n");
-		return EV_FOOTSTEP_SNOW;
-	}
-	if ( pml.groundTrace.surfaceFlags & 0x14020 ) {	//mrd - testing snowsteps
-		Com_Printf("Footstep trace bitflag 0x14020\n");
-		return EV_FOOTSTEP_SNOW;
-	}*/
 	return EV_FOOTSTEP;
 }
 
@@ -1828,12 +1812,9 @@ static void PM_Footsteps( void ) {
 	if ( ( ( old + 64 ) ^ ( pm->ps->bobCycle + 64 ) ) & 128 ) {
 		if ( pm->waterlevel == 0 ) {
 			// on ground will only play sounds if running
-			if ( footstep && !pm->noFootsteps ) {
-				if (pm->ps->stats[STAT_EXTFLAGS] & EXTFL_SLIDING) {
-					PM_AddEvent( EV_FOOTSLIDE );
-				} else {
-					PM_AddEvent( PM_FootstepForSurface() );
-				}
+			if (footstep && !pm->noFootsteps)
+			{
+				PM_AddEvent(PM_FootstepForSurface());
 			}
 		} else if ( pm->waterlevel == 1 ) {
 			// splashing

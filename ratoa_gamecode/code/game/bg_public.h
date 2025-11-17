@@ -289,22 +289,29 @@ void Pmove (pmove_t *pmove);
 
 // player_state->stats[] indexes
 // NOTE: may not have more than 16
+// IMPORTANT: First 12 indexes must match OSP for compatibility
 typedef enum {
-	STAT_HEALTH,
-	STAT_HOLDABLE_ITEM,
-	STAT_PERSISTANT_POWERUP,
-	STAT_WEAPONS,					// 16 bit fields
-	STAT_ARMOR,				
-	STAT_DEAD_YAW,					// look this direction when dead (FIXME: get rid of?)
-	STAT_CLIENTS_READY,				// bit mask of clients wishing to exit the intermission (FIXME: configstring?)
-	STAT_MAX_HEALTH,				// health / armor limit, changable by handicap
-	STAT_JUMPTIME,					// rampjump
-	STAT_EXTFLAGS,					// extended playerstate flags
-	STAT_BOBCYCLEREM,				// used to store fractions of bobCycle for consistent, FPS-independent footsteps
+	STAT_HEALTH = 0,
+	STAT_HOLDABLE_ITEM = 1,
+	STAT_WEAPONS = 2,					// 16 bit fields - must match OSP
+	STAT_ARMOR = 3,					// must match OSP
+	STAT_DEAD_YAW = 4,					// look this direction when dead (FIXME: get rid of?) - must match OSP
+	STAT_CLIENTS_READY = 5,				// bit mask of clients wishing to exit the intermission (FIXME: configstring?) - must match OSP
+	STAT_MAX_HEALTH = 6,				// health / armor limit, changable by handicap - must match OSP
+	STAT_OSP_PHYS = 7,					// OSP compatibility - must match OSP
+	STAT_RAIL_DELAY = 8,				// OSP compatibility - must match OSP
+	STAT_ARMOR_TYPE = 9,				// OSP compatibility - must match OSP
+	STAT_OSP_10 = 10,					// OSP compatibility - must match OSP
+	STAT_WEAPON_DELAY = 11,				// OSP compatibility - must match OSP
+	// Devotion-specific stats (after OSP compatibility range)
+	STAT_PERSISTANT_POWERUP = 12,		// devotion-specific, moved after OSP range
+	STAT_JUMPTIME,						// rampjump
+	STAT_EXTFLAGS,						// extended playerstate flags
+	STAT_BOBCYCLEREM,					// used to store fractions of bobCycle for consistent, FPS-independent footsteps
 	STAT_OVERBOUNCE,					// Overbounce flag (only 1 bit, this could be integrated into another bitflag field if more STAT_ fields are required)
-	STAT_FROZENSTATE,				// used to store frozen/thawing state if g_freeze = 1
-	STAT_SLIDETIMEOUT,				// holds slide time left after releasing crouch
-	STAT_MOVEMENT_KEYS				// used to store key presses.
+	STAT_FROZENSTATE,					// used to store frozen/thawing state if g_freeze = 1
+	STAT_SLIDETIMEOUT,					// holds slide time left after releasing crouch
+	STAT_MOVEMENT_KEYS					// used to store key presses.
 } statIndex_t;
 
 
@@ -545,8 +552,6 @@ typedef enum {
 
 	EV_FOOTSTEP,
 	EV_FOOTSTEP_METAL,
-	EV_FOOTSTEP_WOOD,	//mrd
-	EV_FOOTSTEP_SNOW,	//mrd
 	EV_FOOTSPLASH,
 	EV_FOOTWADE,
 	EV_SWIM,
@@ -560,22 +565,22 @@ typedef enum {
 	EV_FALL_MEDIUM,
 	EV_FALL_FAR,
 
-	EV_JUMP_PAD,			// boing sound at origin, jump sound on player
+	EV_JUMP_PAD,          // boing sound at origin", jump sound on player
 
-	EV_JUMP,                        //Event 14
-	EV_WATER_TOUCH,	// foot touches
-	EV_WATER_LEAVE,	// foot leaves
-	EV_WATER_UNDER,	// head touches
-	EV_WATER_CLEAR,	// head leaves
+	EV_JUMP,
+	EV_WATER_TOUCH,   // foot touches
+	EV_WATER_LEAVE,   // foot leaves
+	EV_WATER_UNDER,   // head touches
+	EV_WATER_CLEAR,   // head leaves
 
-	EV_ITEM_PICKUP,			// normal item pickups are predictable
-	EV_GLOBAL_ITEM_PICKUP,	// powerup / team sounds are broadcast to everyone
+	EV_ITEM_PICKUP,           // normal item pickups are predictable
+	EV_GLOBAL_ITEM_PICKUP,    // powerup / team sounds are broadcast to everyone
 
 	EV_NOAMMO,
 	EV_CHANGE_WEAPON,
 	EV_FIRE_WEAPON,
 
-	EV_USE_ITEM0,                   //Event 24
+	EV_USE_ITEM0,
 	EV_USE_ITEM1,
 	EV_USE_ITEM2,
 	EV_USE_ITEM3,
@@ -592,50 +597,48 @@ typedef enum {
 	EV_USE_ITEM14,
 	EV_USE_ITEM15,
 
-	EV_ITEM_RESPAWN,                //Event 40
+	EV_ITEM_RESPAWN,
 	EV_ITEM_POP,
 	EV_PLAYER_TELEPORT_IN,
 	EV_PLAYER_TELEPORT_OUT,
 
-	EV_GRENADE_BOUNCE,		// eventParm will be the soundindex
+	EV_GRENADE_BOUNCE,        // eventParm will be the soundindex
 
 	EV_GENERAL_SOUND,
-	EV_GLOBAL_SOUND,		// no attenuation
+	EV_GLOBAL_SOUND,      // no attenuation
 	EV_GLOBAL_TEAM_SOUND,
 
 	EV_BULLET_HIT_FLESH,
 	EV_BULLET_HIT_WALL,
 
-	EV_MISSILE_HIT,                 //Event 50
+	EV_MISSILE_HIT,
 	EV_MISSILE_MISS,
 	EV_MISSILE_MISS_METAL,
 	EV_RAILTRAIL,
 	EV_SHOTGUN,
-	EV_BULLET,				// otherEntity is the shooter
+	EV_BULLET,                // otherEntity is the shooter
 
 	EV_PAIN,
 	EV_DEATH1,
 	EV_DEATH2,
 	EV_DEATH3,
-	EV_OBITUARY,                    //Event 60
+	EV_OBITUARY,
 
 	EV_POWERUP_QUAD,
 	EV_POWERUP_BATTLESUIT,
 	EV_POWERUP_REGEN,
 
-	EV_GIB_PLAYER,			// gib a previously living player
-	EV_SCOREPLUM,			// score plum
+	EV_GIB_PLAYER,            // gib a previously living player
+	EV_SCOREPLUM,         // score plum
 
-#ifdef MISSIONPACK
 	EV_PROXIMITY_MINE_STICK,
 	EV_PROXIMITY_MINE_TRIGGER,
-	EV_KAMIKAZE,			// kamikaze explodes
-	EV_OBELISKEXPLODE,		// obelisk explodes
-	EV_OBELISKPAIN,			// obelisk is in pain
-	EV_INVUL_IMPACT,		// invulnerability sphere impact
-	EV_JUICED,				// invulnerability juiced effect
-	EV_LIGHTNINGBOLT,		// lightning bolt bounced of invulnerability sphere
-#endif
+	EV_KAMIKAZE,            // kamikaze explodes
+	EV_OBELISKEXPLODE,      // obelisk explodes
+	EV_OBELISKPAIN,         // obelisk is in pain
+	EV_INVUL_IMPACT,        // invulnerability sphere impact
+	EV_JUICED,              // invulnerability juiced effect
+	EV_LIGHTNINGBOLT,       // lightning bolt bounced of invulnerability sphere
 
 	EV_DEBUG_LINE,
 	EV_STOPLOOPINGSOUND,
@@ -645,15 +648,8 @@ typedef enum {
 	EV_TAUNT_FOLLOWME,
 	EV_TAUNT_GETFLAG,
 	EV_TAUNT_GUARDBASE,
-	EV_TAUNT_PATROL,
+	EV_TAUNT_PATROL
 
-	EV_MISSILE_TELEPORT,
-	EV_PING_LOCATION,
-	EV_COIN_BOUNCE,
-	EV_FREEZE,
-	EV_FOOTSLIDE, // for crouch slide
-	EV_DAMAGEPLUM,
-	EV_PUSHNOTIFY,
 } entity_event_t;
 
 
@@ -664,10 +660,8 @@ typedef enum {
 	GTS_BLUE_RETURN,
 	GTS_RED_TAKEN,
 	GTS_BLUE_TAKEN,
-#ifdef MISSIONPACK
 	GTS_REDOBELISK_ATTACKED,
 	GTS_BLUEOBELISK_ATTACKED,
-#endif
 	GTS_REDTEAM_SCORED,
 	GTS_BLUETEAM_SCORED,
 	GTS_REDTEAM_TOOK_LEAD,

@@ -1453,17 +1453,19 @@ clientInfo_t *ci;
 		}
 	}
 
-	if (cgs.ratFlags & RAT_ALLOWFORCEDMODELS && 
-			(  (!enemy && cg_teamModel.string[0]) ||
-			   ( enemy && cg_enemyModel.string[0])
-			)) {
+	// Always allow forced models (removed RAT_ALLOWFORCEDMODELS dependency)
+	if (  (!enemy && cg_teamModel.string[0]) ||
+		   ( enemy && cg_enemyModel.string[0])
+		) {
+		char tempModelName[MAX_QPATH];
+		
 		if (enemy) {
-			Q_strncpyz( newInfo.modelName, cg_enemyModel.string, sizeof( newInfo.modelName ) );
+			Q_strncpyz( tempModelName, cg_enemyModel.string, sizeof( tempModelName ) );
 		} else {
-			Q_strncpyz( newInfo.modelName, cg_teamModel.string, sizeof( newInfo.modelName ) );
+			Q_strncpyz( tempModelName, cg_teamModel.string, sizeof( tempModelName ) );
 		}
 
-		slash = strchr( newInfo.modelName, '/' );
+		slash = strchr( tempModelName, '/' );
 		if ( !slash ) {
 			// modelName didn not include a skin name
 			Q_strncpyz( newInfo.skinName, "default", sizeof( newInfo.skinName ) );
@@ -1472,6 +1474,15 @@ clientInfo_t *ci;
 			// truncate modelName
 			*slash = 0;
 		}
+		
+		// Validate model name - if unknown, use default model
+		if (!CG_IsKnownModel( tempModelName )) {
+			// revert to default model if specified model is not known
+			Q_strncpyz( tempModelName, "sarge", sizeof( tempModelName ) );
+		}
+		
+		Q_strncpyz( newInfo.modelName, tempModelName, sizeof( newInfo.modelName ) );
+		
 		// replace "pm" with "bright" models for compatibility with
 		// configs from other mods
 		/*
@@ -1538,17 +1549,19 @@ clientInfo_t *ci;
 	CG_SetSkinAndModel( &newInfo, ci, v, allowNativeModel, clientNum, myClientNum, qtrue, 
 		newInfo.headModelName, sizeof( newInfo.headModelName ),	newInfo.headSkinName, sizeof( newInfo.headSkinName ) );
 
-	if (cgs.ratFlags & RAT_ALLOWFORCEDMODELS && 
-			(  (!enemy && cg_teamModel.string[0]) ||
-			   ( enemy && cg_enemyModel.string[0])
-			)) {
+	// Always allow forced models (removed RAT_ALLOWFORCEDMODELS dependency)
+	if (  (!enemy && cg_teamModel.string[0]) ||
+		   ( enemy && cg_enemyModel.string[0])
+		) {
+		char tempHeadModelName[MAX_QPATH];
+		
 		if (enemy) {
-			Q_strncpyz( newInfo.headModelName, cg_enemyModel.string, sizeof( newInfo.headModelName ) );
+			Q_strncpyz( tempHeadModelName, cg_enemyModel.string, sizeof( tempHeadModelName ) );
 		} else {
-			Q_strncpyz( newInfo.headModelName, cg_teamModel.string, sizeof( newInfo.headModelName ) );
+			Q_strncpyz( tempHeadModelName, cg_teamModel.string, sizeof( tempHeadModelName ) );
 		}
 
-		slash = strchr( newInfo.headModelName, '/' );
+		slash = strchr( tempHeadModelName, '/' );
 		if ( !slash ) {
 			// headModelName didn not include a skin name
 			Q_strncpyz( newInfo.headSkinName, "default", sizeof( newInfo.headSkinName ) );
@@ -1557,6 +1570,14 @@ clientInfo_t *ci;
 			// truncate headModelName
 			*slash = 0;
 		}
+		
+		// Validate head model name - if unknown, use default model
+		if (!CG_IsKnownModel( tempHeadModelName )) {
+			// revert to default model if specified model is not known
+			Q_strncpyz( tempHeadModelName, "sarge", sizeof( tempHeadModelName ) );
+		}
+		
+		Q_strncpyz( newInfo.headModelName, tempHeadModelName, sizeof( newInfo.headModelName ) );
 		// replace "pm" with "bright" models for compatibility with
 		// configs from other mods
 		/*

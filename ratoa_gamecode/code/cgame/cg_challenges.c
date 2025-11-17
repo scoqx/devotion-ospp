@@ -25,11 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../renderer/tr_types.h"
 #include "../game/bg_public.h"
 #include "../game/challenges.h"
-#ifdef PARTofUI
-#include "../q3_ui/ui_local.h"
-#else
-#include "../cgame/cg_local.h"
-#endif
+#include "cg_local.h"
 
 #define FILENAME    "challenges.dat"
 
@@ -88,9 +84,7 @@ void challenges_save(void)
 	if(fileStatus<0)
 	{
 		//For some reason file opening failed
-                #ifndef PARTofUI
 		CG_Printf("Failed to open challenges.dat for writing\n");
-                #endif
 		return;
 	}
 	for(i=0;i<CHALLENGES_MAX;i++)
@@ -103,9 +97,7 @@ void challenges_save(void)
 	trap_FS_FCloseFile(file);
 	//Lets make the challenges system uninitialized since changes after this will most likely not be saved anyway.
 	challengesInitialized = qfalse;
-        #ifndef PARTofUI
 	CG_Printf("Wrote challenges.cfg\n");
-        #endif
 }
 
 //Get the number of times a given challenge has been completed
@@ -121,9 +113,7 @@ void addChallenge(int challenge)
 {
 	if(challenge>=CHALLENGES_MAX)
 	{
-                #ifndef PARTofUI
 		CG_Printf("Challenge #%u is >=CHALLENGES_MAX\n",challenge);
-                #endif
 		return; //Maybe also print an error?	
 	}
 	challenges_init();

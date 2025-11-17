@@ -277,7 +277,7 @@ void CG_LightningBoltBeam( vec3_t start, vec3_t end ) {
 
 	le = CG_AllocLocalEntity();
 	le->leFlags = 0;
-	le->leType = LE_SHOWREFENTITY;
+	// le->leType = LE_SHOWREFENTITY;
 	le->startTime = cg.time;
 	le->endTime = cg.time + 50;
 
@@ -503,7 +503,7 @@ void CG_InvulnerabilityImpact( vec3_t org, vec3_t angles ) {
 
 		le = CG_AllocLocalEntity();
 		le->leFlags = 0;
-		le->leType = LE_DAMAGEPLUM;
+		// le->leType = LE_DAMAGEPLUM;
 		le->startTime = cg.time;
 		le->endTime = cg.time + 1000;
 		le->lifeRate = 1.0 / ( le->endTime - le->startTime );
@@ -654,7 +654,7 @@ void CG_InvulnerabilityImpact( vec3_t org, vec3_t angles ) {
 						  cgs.media.lbldShader1 );
 			// use the optimized version
 			blood->leType = LE_FALL_SCALE_FADE;
-			blood->leType = LE_GORE;
+			// blood->leType = LE_GORE;
 			blood->pos.trType = TR_GRAVITY;
 			VectorCopy( velocity, blood->pos.trDelta );
 			blood->pos.trDelta[2] = 55;
@@ -1004,7 +1004,7 @@ void CG_PingLocation( centity_t *cent ) {
 	re->rotation = 0;
 	re->shaderTime = startTime / 1000.0f;
 
-	le->leType = LE_LOCATIONPING;
+	// le->leType = LE_LOCATIONPING;
 	le->startTime = startTime;
 	le->fadeInTime = 0;
 	le->endTime = startTime + durationBg;
@@ -1077,8 +1077,8 @@ void CG_PingLocation( centity_t *cent ) {
 	re->rotation = 0;
 	re->shaderTime = startTime / 1000.0f;
 
-	le->leType = LE_LOCATIONPING;
-	le->leFlags = LEF_PUFF_DONT_SCALE | LEF_PINGLOC_HUD;
+	// le->leType = LE_LOCATIONPING;
+	// le->leFlags = LEF_PUFF_DONT_SCALE | LEF_PINGLOC_HUD;
 	le->startTime = startTime;
 	le->fadeInTime = 0;
 	le->endTime = startTime + durationFg;

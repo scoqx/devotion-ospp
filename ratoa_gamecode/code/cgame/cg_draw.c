@@ -4082,7 +4082,7 @@ static float CG_DrawPickupItem( float y ) {
 	} 
 
 	value = cg.itemPickup;
-	if ( value ) {
+	if ( value && value < bg_numItems ) {
 		fadeColor = CG_FadeColor( cg.itemPickupTime, 3000 );
 		if ( fadeColor ) {
 			CG_RegisterItemVisuals( value );
@@ -4407,7 +4407,7 @@ static void CG_DrawHoldableItem( void ) {
 	int		value;
 
 	value = cg.snap->ps.stats[STAT_HOLDABLE_ITEM];
-	if ( value ) {
+	if ( value && value < bg_numItems ) {
 		CG_RegisterItemVisuals( value );
 		CG_DrawPic( CG_HeightToWidth(ICON_SIZE) - 16, (SCREEN_HEIGHT-ICON_SIZE)/2, CG_HeightToWidth(ICON_SIZE)/2, ICON_SIZE/2, cg_items[ value ].icon );
 	}
@@ -4426,7 +4426,7 @@ static void CG_DrawPersistantPowerup( void ) {
 	int		value;
 
 	value = cg.snap->ps.stats[STAT_PERSISTANT_POWERUP];
-	if ( value ) {
+	if ( value && value < bg_numItems ) {
 		CG_RegisterItemVisuals( value );
 		CG_DrawPic( 640-ICON_SIZE, (SCREEN_HEIGHT-ICON_SIZE)/2 - ICON_SIZE, ICON_SIZE, ICON_SIZE, cg_items[ value ].icon );
 	}
@@ -5884,10 +5884,17 @@ static void CG_DrawTeamVote(void) {
 static qboolean CG_DrawThawing(void) {
         char *s;
         int w;
-	unsigned int frozenState = cg.snap->ps.stats[STAT_FROZENSTATE];
+	unsigned int frozenState;
 	float thawFrac;
 	float color[4];
 	float width, height, x, y;
+
+	// Only show thawing on devotion servers with freezetag enabled
+	if (!(cgs.ratFlags & RAT_FREEZETAG)) {
+		return qfalse;
+	}
+
+	frozenState = cg.snap->ps.stats[STAT_FROZENSTATE];
 
 	if (!(frozenState & FROZENSTATE_FROZEN)) {
 		return qfalse;

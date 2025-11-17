@@ -1606,13 +1606,12 @@ const char *entitynames[] = {
 	"ET_TEAM"
 };
 
-const char *eventnames[] = {
+char* eventnames[] =
+{
 	"EV_NONE",
 
 	"EV_FOOTSTEP",
 	"EV_FOOTSTEP_METAL",
-	"EV_FOOTSTEP_WOOD",	//mrd
-	"EV_FOOTSTEP_SNOW",	//mrd
 	"EV_FOOTSPLASH",
 	"EV_FOOTWADE",
 	"EV_SWIM",
@@ -1626,16 +1625,16 @@ const char *eventnames[] = {
 	"EV_FALL_MEDIUM",
 	"EV_FALL_FAR",
 
-	"EV_JUMP_PAD",			// boing sound at origin", jump sound on player
+	"EV_JUMP_PAD",          // boing sound at origin", jump sound on player
 
 	"EV_JUMP",
-	"EV_WATER_TOUCH",	// foot touches
-	"EV_WATER_LEAVE",	// foot leaves
-	"EV_WATER_UNDER",	// head touches
-	"EV_WATER_CLEAR",	// head leaves
+	"EV_WATER_TOUCH",   // foot touches
+	"EV_WATER_LEAVE",   // foot leaves
+	"EV_WATER_UNDER",   // head touches
+	"EV_WATER_CLEAR",   // head leaves
 
-	"EV_ITEM_PICKUP",			// normal item pickups are predictable
-	"EV_GLOBAL_ITEM_PICKUP",	// powerup / team sounds are broadcast to everyone
+	"EV_ITEM_PICKUP",           // normal item pickups are predictable
+	"EV_GLOBAL_ITEM_PICKUP",    // powerup / team sounds are broadcast to everyone
 
 	"EV_NOAMMO",
 	"EV_CHANGE_WEAPON",
@@ -1663,10 +1662,10 @@ const char *eventnames[] = {
 	"EV_PLAYER_TELEPORT_IN",
 	"EV_PLAYER_TELEPORT_OUT",
 
-	"EV_GRENADE_BOUNCE",		// eventParm will be the soundindex
+	"EV_GRENADE_BOUNCE",        // eventParm will be the soundindex
 
 	"EV_GENERAL_SOUND",
-	"EV_GLOBAL_SOUND",		// no attenuation
+	"EV_GLOBAL_SOUND",      // no attenuation
 	"EV_GLOBAL_TEAM_SOUND",
 
 	"EV_BULLET_HIT_FLESH",
@@ -1677,7 +1676,7 @@ const char *eventnames[] = {
 	"EV_MISSILE_MISS_METAL",
 	"EV_RAILTRAIL",
 	"EV_SHOTGUN",
-	"EV_BULLET",				// otherEntity is the shooter
+	"EV_BULLET",                // otherEntity is the shooter
 
 	"EV_PAIN",
 	"EV_DEATH1",
@@ -1689,36 +1688,22 @@ const char *eventnames[] = {
 	"EV_POWERUP_BATTLESUIT",
 	"EV_POWERUP_REGEN",
 
-	"EV_GIB_PLAYER",			// gib a previously living player
-	"EV_SCOREPLUM",			// score plum
+	"EV_GIB_PLAYER",            // gib a previously living player
+	"EV_SCOREPLUM",         // score plum
 
-//Not all of these are used in baseoa but we keep them to gurantie event numbers between version
+//#ifdef MISSIONPACK
 	"EV_PROXIMITY_MINE_STICK",
 	"EV_PROXIMITY_MINE_TRIGGER",
-	"EV_KAMIKAZE",			// kamikaze explodes
-	"EV_OBELISKEXPLODE",		// obelisk explodes
-	"EV_INVUL_IMPACT",		// invulnerability sphere impact
-	"EV_JUICED",				// invulnerability juiced effect
-	"EV_LIGHTNINGBOLT",		// lightning bolt bounced of invulnerability sphere
-
+	"EV_KAMIKAZE",          // kamikaze explodes
+	"EV_OBELISKEXPLODE",        // obelisk explodes
+	"EV_INVUL_IMPACT",      // invulnerability sphere impact
+	"EV_JUICED",                // invulnerability juiced effect
+	"EV_LIGHTNINGBOLT",     // lightning bolt bounced of invulnerability sphere
+//#endif
 
 	"EV_DEBUG_LINE",
 	"EV_STOPLOOPINGSOUND",
-	"EV_TAUNT",
-	"EV_TAUNT_YES",
-	"EV_TAUNT_NO",
-	"EV_TAUNT_FOLLOWME",
-	"EV_TAUNT_GETFLAG",
-	"EV_TAUNT_GUARDBASE",
-	"EV_TAUNT_PATROL",
-
-	"EV_MISSILE_TELEPORT",
-	"EV_PING_LOCATION",
-	"EV_COIN_BOUNCE",
-	"EV_FREEZE",
-	"EV_FOOTSLIDE",
-	"EV_DAMAGEPLUM",
-	"EV_PUSHNOTIFY"
+	"EV_TAUNT"
 
 };
 
